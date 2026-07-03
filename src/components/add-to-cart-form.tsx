@@ -6,6 +6,7 @@ import { Minus, Plus } from "lucide-react";
 import { Product } from "@/lib/types";
 import { useCartStore } from "@/store/cart";
 import { Button } from "@/components/ui/button";
+import { flyToCart } from "@/lib/fly-to-cart";
 
 export function AddToCartForm({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
@@ -17,10 +18,10 @@ export function AddToCartForm({ product }: { product: Product }) {
   const disabled = product.status === "sold_out";
   const ctaLabel =
     product.status === "sold_out"
-      ? "Немає в наявності"
+      ? "Out of stock"
       : product.status === "preorder"
-      ? "Передзамовити"
-      : "Додати в кошик";
+      ? "Pre-order"
+      : "Add to cart";
 
   return (
     <div className="flex flex-col gap-6">
@@ -50,12 +51,12 @@ export function AddToCartForm({ product }: { product: Product }) {
 
       <div className="flex items-center gap-4">
         <span className="font-mono text-xs uppercase tracking-widest text-ink-soft">
-          Кількість
+          Quantity
         </span>
         <div className="flex items-center gap-3 rounded-full border border-ink/20 px-3 py-2">
           <button
             type="button"
-            aria-label="Зменшити кількість"
+            aria-label="Decrease quantity"
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
             className="text-ink-soft hover:text-ink"
           >
@@ -64,7 +65,7 @@ export function AddToCartForm({ product }: { product: Product }) {
           <span className="w-6 text-center font-mono text-sm">{quantity}</span>
           <button
             type="button"
-            aria-label="Збільшити кількість"
+            aria-label="Increase quantity"
             onClick={() => setQuantity((q) => Math.min(product.stock || 10, q + 1))}
             className="text-ink-soft hover:text-ink"
           >
@@ -79,6 +80,7 @@ export function AddToCartForm({ product }: { product: Product }) {
         disabled={disabled}
         className="w-full"
         onClick={() => {
+          flyToCart(document.getElementById("product-hero-image"), product.images[0]);
           addLine({
             productId: product.id,
             slug: product.slug,
@@ -88,8 +90,8 @@ export function AddToCartForm({ product }: { product: Product }) {
             quantity,
             selectedVariants: Object.keys(variants).length ? variants : undefined,
           });
-          toast.success(`${product.title} додано в кошик`, {
-            description: `${quantity} шт.`,
+          toast.success(`${product.title} added to cart`, {
+            description: `Qty: ${quantity}`,
           });
         }}
       >

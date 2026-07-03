@@ -6,7 +6,7 @@ export async function GET(_request: Request, ctx: RouteContext<"/api/orders/[id]
   const order = await getOrderById(id);
 
   if (!order) {
-    return NextResponse.json({ error: "Замовлення не знайдено" }, { status: 404 });
+    return NextResponse.json({ error: "Order not found" }, { status: 404 });
   }
 
   return NextResponse.json({ order });

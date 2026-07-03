@@ -30,14 +30,14 @@ export default function CartPage() {
     return (
       <div className="mx-auto max-w-2xl px-6 py-24">
         <EmptyState
-          title="Кошик порожній"
-          description="Додайте щось із вітрини — почніть із наших бестселерів."
+          title="Your cart is empty"
+          description="Add something from the shop — start with our bestsellers."
           action={
             <Link
               href="/catalog"
               className="kinetic-link font-mono text-xs uppercase tracking-widest"
             >
-              До каталогу →
+              Browse the shop →
             </Link>
           }
         />
@@ -57,16 +57,16 @@ export default function CartPage() {
       });
       const data = await res.json();
       if (!res.ok) {
-        setCouponError(data.error ?? "Не вдалося застосувати промокод");
+        setCouponError(data.error ?? "Could not apply the promo code");
         setCouponState("error");
         setCoupon(null, 0);
         return;
       }
       setCoupon(data.code, data.discount);
       setCouponState("idle");
-      toast.success(`Промокод ${data.code} застосовано`);
+      toast.success(`Promo code ${data.code} applied`);
     } catch {
-      setCouponError("Проблема зі з'єднанням. Спробуйте ще раз.");
+      setCouponError("Connection issue. Please try again.");
       setCouponState("error");
     }
   }
@@ -75,7 +75,7 @@ export default function CartPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
-      <h1 className="font-display text-4xl md:text-5xl">Кошик</h1>
+      <h1 className="font-display text-4xl md:text-5xl">Cart</h1>
       <div className="mt-10 grid grid-cols-1 gap-12 lg:grid-cols-[1fr_360px]">
         <ul className="flex flex-col divide-y divide-ink/10">
           {lines.map((line) => (
@@ -99,7 +99,7 @@ export default function CartPage() {
                     )}
                   </div>
                   <button
-                    aria-label="Видалити товар"
+                    aria-label="Remove item"
                     onClick={() => removeLine(line.productId)}
                     className="text-ink-soft hover:text-terracotta"
                   >
@@ -109,7 +109,7 @@ export default function CartPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3 rounded-full border border-ink/20 px-3 py-1.5">
                     <button
-                      aria-label="Зменшити кількість"
+                      aria-label="Decrease quantity"
                       onClick={() => setQuantity(line.productId, line.quantity - 1)}
                       className="text-ink-soft hover:text-ink"
                     >
@@ -117,7 +117,7 @@ export default function CartPage() {
                     </button>
                     <span className="w-5 text-center font-mono text-sm">{line.quantity}</span>
                     <button
-                      aria-label="Збільшити кількість"
+                      aria-label="Increase quantity"
                       onClick={() => setQuantity(line.productId, line.quantity + 1)}
                       className="text-ink-soft hover:text-ink"
                     >
@@ -136,7 +136,7 @@ export default function CartPage() {
         <aside className="flex h-max flex-col gap-6 rounded-2xl border border-ink/10 bg-paper-raised p-6">
           <div className="flex flex-col gap-2">
             <span className="font-mono text-xs uppercase tracking-widest text-ink-soft">
-              Промокод
+              Promo code
             </span>
             <div className="flex gap-2">
               <input
@@ -157,30 +157,30 @@ export default function CartPage() {
             </div>
             {couponError && <p className="text-xs text-terracotta">{couponError}</p>}
             {couponCode && discount > 0 && (
-              <p className="text-xs text-olive">Застосовано {couponCode}</p>
+              <p className="text-xs text-olive">Applied {couponCode}</p>
             )}
           </div>
 
           <div className="flex flex-col gap-2 border-t border-ink/10 pt-4 font-mono text-sm">
             <div className="flex justify-between text-ink-soft">
-              <span>Проміжна сума</span>
+              <span>Subtotal</span>
               <span>{formatPrice(subtotal)}</span>
             </div>
             {discount > 0 && (
               <div className="flex justify-between text-olive">
-                <span>Знижка</span>
+                <span>Discount</span>
                 <span>-{formatPrice(discount)}</span>
               </div>
             )}
             <div className="flex justify-between border-t border-ink/10 pt-2 text-base">
-              <span>Разом</span>
+              <span>Total</span>
               <span>{formatPrice(total)}</span>
             </div>
           </div>
 
           <Link href="/checkout">
             <Button size="lg" className="w-full">
-              Оформити замовлення
+              Proceed to checkout
             </Button>
           </Link>
         </aside>

@@ -10,7 +10,7 @@ export function CatalogFilters({
   activeCategory: string;
   search: string;
 }) {
-  const categories = ["Усі", ...CATEGORIES];
+  const categories = ["All", ...CATEGORIES];
 
   return (
     <div className="flex flex-col gap-6 border-b border-ink/10 pb-8">
@@ -18,7 +18,7 @@ export function CatalogFilters({
         {categories.map((category) => {
           const active = category === activeCategory;
           const href =
-            category === "Усі" ? "/catalog" : `/catalog?category=${encodeURIComponent(category)}`;
+            category === "All" ? "/catalog" : `/catalog?category=${encodeURIComponent(category)}`;
           return (
             <Link
               key={category}
@@ -36,7 +36,7 @@ export function CatalogFilters({
         })}
       </div>
       <form action="/catalog" method="get" className="relative max-w-sm">
-        {activeCategory !== "Усі" && (
+        {activeCategory !== "All" && (
           <input type="hidden" name="category" value={activeCategory} />
         )}
         <Search
@@ -48,7 +48,7 @@ export function CatalogFilters({
           type="text"
           name="search"
           defaultValue={search}
-          placeholder="Пошук по вітрині…"
+          placeholder="Search the shop…"
           className="w-full rounded-full border border-ink/20 bg-paper py-2.5 pl-10 pr-4 text-sm outline-none focus:border-terracotta"
         />
       </form>

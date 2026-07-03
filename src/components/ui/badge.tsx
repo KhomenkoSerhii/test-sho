@@ -21,10 +21,10 @@ export function Badge({
 }
 
 const STATUS_LABEL: Record<ProductStatus, string> = {
-  in_stock: "В наявності",
-  low_stock: "Залишки закінчуються",
-  sold_out: "Немає в наявності",
-  preorder: "Передзамовлення",
+  in_stock: "In stock",
+  low_stock: "Low stock",
+  sold_out: "Out of stock",
+  preorder: "Pre-order",
 };
 
 const STATUS_CLASS: Record<ProductStatus, string> = {

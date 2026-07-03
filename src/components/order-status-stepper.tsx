@@ -3,18 +3,18 @@ import { cn } from "@/lib/utils";
 import { OrderStatus } from "@/lib/types";
 
 const STEPS: { key: OrderStatus; label: string }[] = [
-  { key: "pending_payment", label: "Очікує оплати" },
-  { key: "confirmed", label: "Підтверджено" },
-  { key: "processing", label: "Комплектується" },
-  { key: "shipped", label: "Відправлено" },
-  { key: "delivered", label: "Доставлено" },
+  { key: "pending_payment", label: "Awaiting payment" },
+  { key: "confirmed", label: "Confirmed" },
+  { key: "processing", label: "Processing" },
+  { key: "shipped", label: "Shipped" },
+  { key: "delivered", label: "Delivered" },
 ];
 
 export function OrderStatusStepper({ status }: { status: OrderStatus }) {
   if (status === "cancelled") {
     return (
       <div className="rounded-2xl border border-terracotta/40 bg-terracotta/10 px-6 py-4 text-terracotta">
-        Замовлення скасовано
+        Order cancelled
       </div>
     );
   }

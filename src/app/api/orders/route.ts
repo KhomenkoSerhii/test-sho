@@ -11,7 +11,7 @@ function generateOrderId() {
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
   if (!body) {
-    return NextResponse.json({ error: "Некоректний запит" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
   const parsed = checkoutSchema.safeParse(body.address);
@@ -20,12 +20,12 @@ export async function POST(request: NextRequest) {
     for (const issue of parsed.error.issues) {
       fields[String(issue.path[0])] = issue.message;
     }
-    return NextResponse.json({ error: "Перевірте поля форми", fields }, { status: 422 });
+    return NextResponse.json({ error: "Please check the form fields", fields }, { status: 422 });
   }
 
   const lines = body.lines as CartLine[] | undefined;
   if (!lines || lines.length === 0) {
-    return NextResponse.json({ error: "Кошик порожній" }, { status: 422 });
+    return NextResponse.json({ error: "Your cart is empty" }, { status: 422 });
   }
 
   const subtotal = lines.reduce((sum, l) => sum + l.price * l.quantity, 0);

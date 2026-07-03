@@ -5,11 +5,11 @@ export default function ProductNotFound() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-24">
       <EmptyState
-        title="Товар не знайдено"
-        description="Можливо, він більше не продається або посилання застаріле."
+        title="Product not found"
+        description="It may no longer be for sale, or the link is out of date."
         action={
           <Link href="/catalog" className="kinetic-link font-mono text-xs uppercase tracking-widest">
-            Повернутись до каталогу →
+            Back to the shop →
           </Link>
         }
       />

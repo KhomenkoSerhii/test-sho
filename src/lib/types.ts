@@ -8,7 +8,7 @@ export type Product = {
   description: string;
   price: number;
   compareAtPrice?: number;
-  currency: "UAH";
+  currency: "USD";
   category: string;
   tags: string[];
   status: ProductStatus;
@@ -63,7 +63,7 @@ export type Order = {
   shippingFee: number;
   total: number;
   couponCode?: string;
-  shippingMethod: "nova_poshta" | "ukrposhta" | "courier";
+  shippingMethod: "standard" | "express" | "courier";
   paymentMethod: "card" | "cod";
   address: OrderAddress;
 };

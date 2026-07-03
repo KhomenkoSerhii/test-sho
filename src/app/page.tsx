@@ -4,10 +4,10 @@ import { ProductGrid } from "@/components/product-grid";
 import { Reveal } from "@/components/reveal";
 
 const MARQUEE_WORDS = [
-  "ВІД ВІТРИНИ ДО ПОРОГУ",
-  "РУЧНА РОБОТА",
-  "ПОВІЛЬНИЙ ДИЗАЙН",
-  "ОБМЕЖЕНІ ТИРАЖІ",
+  "FROM SHOP TO DOORSTEP",
+  "HANDMADE",
+  "SLOW DESIGN",
+  "LIMITED RUNS",
 ];
 
 export default async function Home() {
@@ -16,28 +16,33 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
-      <section className="mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-16 pt-20 md:pt-28">
+      <section className="relative mx-auto flex max-w-6xl flex-col gap-10 overflow-hidden px-6 pb-16 pt-20 md:pt-28">
+        <div
+          aria-hidden
+          className="float-orb pointer-events-none absolute -right-24 -top-10 h-72 w-72 rounded-full bg-terracotta/20 blur-3xl md:h-96 md:w-96"
+        />
         <Reveal>
           <p className="font-mono text-xs uppercase tracking-[0.3em] text-terracotta">
-            Колекція 2026 · Земля та світло
+            2026 Collection · Earth &amp; Light
           </p>
         </Reveal>
         <Reveal delay={0.08}>
-          <h1 className="max-w-3xl font-display text-5xl leading-[1.05] tracking-tight md:text-7xl">
-            Речі для дому, які <span className="italic text-terracotta">старіють</span> красиво.
+          <h1 className="relative max-w-3xl font-display text-5xl leading-[1.05] tracking-tight md:text-7xl">
+            Things for the home that{" "}
+            <span className="shimmer-accent italic">age</span> beautifully.
           </h1>
         </Reveal>
         <Reveal delay={0.16}>
           <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
             <p className="max-w-md text-ink-soft">
-              Кераміка, текстиль та освітлення обмеженими тиражами. Кожен обʼєкт зроблений вручну
-              — від глини до готового вигляду на вашій полиці.
+              Ceramics, textiles, and lighting in limited runs. Every object is made by hand —
+              from clay to the finished piece on your shelf.
             </p>
             <Link
               href="/catalog"
               className="magnetic-btn inline-flex shrink-0 items-center justify-center rounded-full bg-ink px-6 py-3 font-mono text-sm uppercase tracking-wide text-paper hover:bg-terracotta"
             >
-              Дивитись каталог
+              Browse the shop
             </Link>
           </div>
         </Reveal>
@@ -56,18 +61,18 @@ export default async function Home() {
       <section className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-20">
         <Reveal className="flex items-end justify-between gap-4">
           <div>
-            <h2 className="font-display text-3xl md:text-4xl">Обране цього тижня</h2>
+            <h2 className="font-display text-3xl md:text-4xl">This week&apos;s picks</h2>
             <p className="mt-2 text-sm text-ink-soft">
-              Дев’ять предметів, зроблених невеликими майстернями по всій Україні.
+              Nine pieces made by small workshops around the world.
             </p>
           </div>
           <Link href="/catalog" className="kinetic-link hidden font-mono text-xs uppercase tracking-widest md:block">
-            Уся вітрина →
+            View full shop →
           </Link>
         </Reveal>
         <ProductGrid products={featured} />
         <Link href="/catalog" className="kinetic-link self-start font-mono text-xs uppercase tracking-widest md:hidden">
-          Уся вітрина →
+          View full shop →
         </Link>
       </section>
     </div>

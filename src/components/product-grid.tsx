@@ -6,8 +6,8 @@ export function ProductGrid({ products }: { products: Product[] }) {
   if (products.length === 0) {
     return (
       <EmptyState
-        title="Нічого не знайдено"
-        description="Спробуйте іншу категорію або скиньте пошук — вітрина оновлюється щотижня."
+        title="Nothing found"
+        description="Try a different category or clear your search — the shop updates weekly."
       />
     );
   }

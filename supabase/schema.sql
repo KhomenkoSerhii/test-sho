@@ -9,7 +9,7 @@ create table if not exists products (
   description text not null,
   price integer not null,
   compare_at_price integer,
-  currency text not null default 'UAH',
+  currency text not null default 'USD',
   category text not null,
   tags text[] not null default '{}',
   status text not null check (status in ('in_stock', 'low_stock', 'sold_out', 'preorder')),
@@ -57,5 +57,5 @@ create policy "Public read coupons" on coupons for select using (true);
 
 insert into coupons (code, kind, value, min_subtotal) values
   ('TERRA10', 'percent', 10, null),
-  ('FIRST200', 'fixed', 200, 1500)
+  ('FIRST20', 'fixed', 20, 60)
 on conflict (code) do nothing;

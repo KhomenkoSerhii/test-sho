@@ -1,12 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useCartStore } from "@/store/cart";
 
+function subscribe(callback: () => void) {
+  return useCartStore.persist?.onFinishHydration(callback) ?? (() => {});
+}
+
+function getSnapshot() {
+  return useCartStore.persist?.hasHydrated() ?? true;
+}
+
+function getServerSnapshot() {
+  return false;
+}
+
 export function useCartHydrated() {
-  const [hydrated, setHydrated] = useState(() => useCartStore.persist?.hasHydrated() ?? false);
-
-  useEffect(() => useCartStore.persist?.onFinishHydration(() => setHydrated(true)), []);
-
-  return hydrated;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

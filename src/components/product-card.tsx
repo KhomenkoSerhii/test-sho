@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRef } from "react";
 import { Product } from "@/lib/types";
 import { formatPrice, cn } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui/badge";
@@ -9,12 +12,38 @@ const SIZE_SPAN: Record<Product["size"], string> = {
   lg: "md:col-span-2 md:row-span-2",
 };
 
+const MAX_TILT = 7;
+
 export function ProductCard({ product }: { product: Product }) {
+  const ref = useRef<HTMLAnchorElement>(null);
+
+  function handleMove(e: React.MouseEvent<HTMLAnchorElement>) {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    el.style.setProperty("--rx", `${(px - 0.5) * MAX_TILT * 2}deg`);
+    el.style.setProperty("--ry", `${-(py - 0.5) * MAX_TILT * 2}deg`);
+    el.style.setProperty("--mx", `${px * 100}%`);
+    el.style.setProperty("--my", `${py * 100}%`);
+  }
+
+  function reset() {
+    const el = ref.current;
+    if (!el) return;
+    el.style.setProperty("--rx", "0deg");
+    el.style.setProperty("--ry", "0deg");
+  }
+
   return (
     <Link
+      ref={ref}
       href={`/product/${product.slug}`}
+      onMouseMove={handleMove}
+      onMouseLeave={reset}
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border border-ink/10 bg-paper-raised transition-shadow hover:shadow-[0_18px_40px_-20px_rgba(32,28,22,0.35)]",
+        "tilt-card group relative flex flex-col overflow-hidden rounded-2xl border border-ink/10 bg-paper-raised",
         SIZE_SPAN[product.size]
       )}
     >
@@ -23,13 +52,13 @@ export function ProductCard({ product }: { product: Product }) {
         <img
           src={product.images[0]}
           alt={product.title}
-          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          className="tilt-media h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
         <div className="absolute left-3 top-3 flex flex-wrap gap-2">
           {product.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full bg-paper/90 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-ink"
+              className="rounded-full bg-paper/90 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-ink backdrop-blur"
             >
               {tag}
             </span>
@@ -41,7 +70,7 @@ export function ProductCard({ product }: { product: Product }) {
           <h3 className="font-display text-xl leading-tight">{product.title}</h3>
           {product.compareAtPrice && (
             <span className="font-mono text-[10px] uppercase tracking-widest text-terracotta">
-              Знижка
+              Sale
             </span>
           )}
         </div>
@@ -58,6 +87,7 @@ export function ProductCard({ product }: { product: Product }) {
           <StatusBadge status={product.status} />
         </div>
       </div>
+      <span className="tilt-sheen" aria-hidden />
     </Link>
   );
 }

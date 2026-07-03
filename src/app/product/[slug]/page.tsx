@@ -16,9 +16,14 @@ export default async function ProductPage({
 
   return (
     <div className="mx-auto grid max-w-6xl grid-cols-1 gap-16 px-6 py-16 md:grid-cols-2">
-      <div className="aspect-square overflow-hidden rounded-2xl bg-paper-raised">
+      <div className="aspect-square overflow-hidden rounded-2xl bg-paper-raised shadow-[0_30px_60px_-30px_rgb(var(--shadow-color)/0.5)]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={product.images[0]} alt={product.title} className="h-full w-full object-cover" />
+        <img
+          id="product-hero-image"
+          src={product.images[0]}
+          alt={product.title}
+          className="h-full w-full object-cover transition-transform duration-700 ease-out hover:scale-105"
+        />
       </div>
       <div className="flex flex-col gap-6">
         <div>

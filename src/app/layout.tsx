@@ -1,26 +1,27 @@
 import type { Metadata } from "next";
 import { Alegreya, JetBrains_Mono } from "next/font/google";
-import { Toaster } from "sonner";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { GrainOverlay } from "@/components/grain-overlay";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ThemedToaster } from "@/components/themed-toaster";
 import "./globals.css";
 
 const displayFont = Alegreya({
   variable: "--font-fraunces",
-  subsets: ["latin", "cyrillic"],
+  subsets: ["latin"],
   style: ["normal", "italic"],
 });
 
 const monoFont = JetBrains_Mono({
   variable: "--font-geist-mono",
-  subsets: ["latin", "cyrillic"],
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Terra Studio — речі для дому",
+  title: "Terra Studio — home goods",
   description:
-    "Інтернет-магазин керамічних, текстильних та світлових об'єктів для дому. Від вітрини до оформлення замовлення.",
+    "An online shop for handmade ceramics, textiles, and lighting. From storefront to checkout.",
 };
 
 export default function RootLayout({
@@ -29,13 +30,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="uk" className={`${displayFont.variable} ${monoFont.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${displayFont.variable} ${monoFont.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col">
-        <GrainOverlay />
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
-        <Toaster position="bottom-right" toastOptions={{ className: "font-mono text-sm" }} />
+        <ThemeProvider>
+          <GrainOverlay />
+          <SiteHeader />
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+          <ThemedToaster />
+        </ThemeProvider>
       </body>
     </html>
   );
