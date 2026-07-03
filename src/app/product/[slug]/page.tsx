@@ -1,8 +1,43 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/lib/data/products";
 import { formatPrice } from "@/lib/utils";
 import { StatusBadge } from "@/components/ui/badge";
 import { AddToCartForm } from "@/components/add-to-cart-form";
+import { SITE } from "@/lib/site";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const product = await getProductBySlug(slug);
+
+  if (!product) {
+    return { title: "Product not found" };
+  }
+
+  const canonical = `/product/${product.slug}`;
+  const description = `${product.subtitle} — ${product.description}`.slice(0, 160);
+
+  return {
+    title: product.title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      type: "website",
+      title: `${product.title} — ${SITE.name}`,
+      description,
+      url: `${SITE.url}${canonical}`,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${product.title} — ${SITE.name}`,
+      description,
+    },
+  };
+}
 
 export default async function ProductPage({
   params,
@@ -14,8 +49,36 @@ export default async function ProductPage({
 
   if (!product) notFound();
 
+  const availability =
+    product.status === "sold_out"
+      ? "https://schema.org/OutOfStock"
+      : product.status === "preorder"
+      ? "https://schema.org/PreOrder"
+      : "https://schema.org/InStock";
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.title,
+    description: product.description,
+    image: product.images.map((img) => `${SITE.url}${img}`),
+    category: product.category,
+    brand: { "@type": "Brand", name: SITE.name },
+    offers: {
+      "@type": "Offer",
+      price: product.price,
+      priceCurrency: product.currency,
+      availability,
+      url: `${SITE.url}/product/${product.slug}`,
+    },
+  };
+
   return (
     <div className="mx-auto grid max-w-6xl grid-cols-1 gap-16 px-6 py-16 md:grid-cols-2">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="aspect-square overflow-hidden rounded-2xl bg-paper-raised shadow-[0_30px_60px_-30px_rgb(var(--shadow-color)/0.5)]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img

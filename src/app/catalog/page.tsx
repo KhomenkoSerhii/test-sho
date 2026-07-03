@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { listProducts } from "@/lib/data/products";
 import { ProductGrid } from "@/components/product-grid";
 import { CatalogFilters } from "@/components/catalog-filters";
 
-export const metadata = { title: "Shop — Terra Studio" };
+export const metadata: Metadata = {
+  title: "Shop",
+  description:
+    "Browse handmade ceramics, textiles, lighting, and furniture in limited runs. Filter by category and find your next piece.",
+  alternates: { canonical: "/catalog" },
+};
 
 export default async function CatalogPage({
   searchParams,

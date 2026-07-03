@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listProducts } from "@/lib/data/products";
 import { ProductGrid } from "@/components/product-grid";
 import { Reveal } from "@/components/reveal";
+import { SITE } from "@/lib/site";
 
 const MARQUEE_WORDS = [
   "FROM SHOP TO DOORSTEP",
@@ -10,12 +11,39 @@ const MARQUEE_WORDS = [
   "LIMITED RUNS",
 ];
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      name: SITE.name,
+      url: SITE.url,
+      description: SITE.description,
+      logo: `${SITE.url}/apple-icon`,
+    },
+    {
+      "@type": "WebSite",
+      name: SITE.name,
+      url: SITE.url,
+      potentialAction: {
+        "@type": "SearchAction",
+        target: `${SITE.url}/catalog?search={search_term_string}`,
+        "query-input": "required name=search_term_string",
+      },
+    },
+  ],
+};
+
 export default async function Home() {
   const products = await listProducts();
   const featured = products.slice(0, 6);
 
   return (
     <div className="flex flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="relative mx-auto flex max-w-6xl flex-col gap-10 overflow-hidden px-6 pb-16 pt-20 md:pt-28">
         <div
           aria-hidden

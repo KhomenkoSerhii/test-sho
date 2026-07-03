@@ -6,8 +6,11 @@ import { ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/cart";
 import { useCartHydrated } from "@/store/use-hydrated";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { MobileMenu } from "@/components/mobile-menu";
 
-const NAV = [
+type NavItem = { href: string; label: string; accent?: boolean };
+
+const NAV: NavItem[] = [
   { href: "/catalog", label: "Shop" },
   { href: "/catalog?category=Lighting", label: "Lighting" },
   { href: "/catalog?category=Furniture", label: "Furniture" },
@@ -66,6 +69,7 @@ export function SiteHeader() {
               </span>
             )}
           </Link>
+          <MobileMenu items={NAV} />
         </div>
       </div>
     </header>
