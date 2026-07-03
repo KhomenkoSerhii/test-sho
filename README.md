@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Terra Studio — тестовий інтернет-магазин
 
-## Getting Started
+Тестовий проєкт під вакансію "Frontend-розробник інтернет-магазину" (Elevix-agency):
+вітрина → картка товару → кошик → checkout → створення замовлення → статус.
 
-First, run the development server:
+Стек: **Next.js 16 (App Router) + TypeScript + Tailwind v4 + Supabase + Zustand + Framer Motion + React Hook Form + Zod**.
+
+## Дизайн-напрям
+
+Свідомо не типовий "AI SaaS" стиль (фіолетові градієнти, glassmorphism). Натомість:
+
+- **Editorial terracotta** — тепла паперова палітра (крем, вохра, теракота, оливковий), не білий/не темний.
+- **Fraunces** (variable serif) для заголовків + **Geist Mono** для лейблів/цін/навігації — редакційний, а не корпоративний тон.
+- Асиметрична bento-сітка каталогу, grain-текстура поверх усього екрана, kinetic underline на посиланнях, magnetic-кнопки, scroll-reveal анімації (Framer Motion), біжуча стрічка (marquee) на головній.
+- Стани інтерфейсу (loading/empty/error/disabled) продумані для кожного кроку: скелетони каталогу й картки товару, порожній кошик, помилки промокоду/checkout.
+
+## Архітектура даних
+
+`src/lib/data/*` — репозиторії (`products`, `orders`, `coupons`). Якщо задані `NEXT_PUBLIC_SUPABASE_URL` / ключі — читають і пишуть у Supabase; якщо ні — автоматично працюють на моках (`src/lib/mock-data.ts`) та in-memory сховищі замовлень. Це дозволяє запустити проєкт одразу, без налаштування бекенду, і підключити Supabase пізніше без зміни компонентів.
+
+Щоб підключити Supabase:
+
+1. Створіть проєкт на [supabase.com](https://supabase.com).
+2. Виконайте `supabase/schema.sql` у SQL Editor — створить таблиці `products`, `orders`, `coupons` + RLS-політики.
+3. Скопіюйте `.env.example` → `.env.local` і заповніть ключі проєкту.
+4. Наповніть таблицю `products` — формат полів відповідає `src/lib/types.ts`.
+
+## Сценарії e-commerce, які реалізовано
+
+- Вітрина (`/`) з обраними товарами + повний каталог (`/catalog`) з фільтром по категоріях і пошуком (через query-параметри, SSR).
+- Картка товару (`/product/[slug]`) з варіантами, кількістю, станами `in_stock / low_stock / sold_out / preorder`.
+- Кошик (`/cart`): зміна кількості, видалення, застосування промокоду (`TERRA10`, `FIRST200`) з обробкою помилок API.
+- Checkout (`/checkout`): валідація форми (Zod + React Hook Form), вибір доставки (Нова пошта / Укрпошта / кур'єр) з різною вартістю, оплата карткою або при отриманні.
+- Створення замовлення через `POST /api/orders`, сторінка результату (`/order/[id]`) зі степером статусу замовлення.
+
+## Запуск
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Відкрийте [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Структура API
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `POST /api/orders` — створення замовлення (валідація адреси, підрахунок суми, знижки, доставки).
+- `GET /api/orders/[id]` — отримання статусу замовлення.
+- `POST /api/coupons/validate` — перевірка промокоду.

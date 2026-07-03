@@ -1,65 +1,75 @@
-import Image from "next/image";
+import Link from "next/link";
+import { listProducts } from "@/lib/data/products";
+import { ProductGrid } from "@/components/product-grid";
+import { Reveal } from "@/components/reveal";
 
-export default function Home() {
+const MARQUEE_WORDS = [
+  "ВІД ВІТРИНИ ДО ПОРОГУ",
+  "РУЧНА РОБОТА",
+  "ПОВІЛЬНИЙ ДИЗАЙН",
+  "ОБМЕЖЕНІ ТИРАЖІ",
+];
+
+export default async function Home() {
+  const products = await listProducts();
+  const featured = products.slice(0, 6);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="flex flex-col">
+      <section className="mx-auto flex max-w-6xl flex-col gap-10 px-6 pb-16 pt-20 md:pt-28">
+        <Reveal>
+          <p className="font-mono text-xs uppercase tracking-[0.3em] text-terracotta">
+            Колекція 2026 · Земля та світло
           </p>
+        </Reveal>
+        <Reveal delay={0.08}>
+          <h1 className="max-w-3xl font-display text-5xl leading-[1.05] tracking-tight md:text-7xl">
+            Речі для дому, які <span className="italic text-terracotta">старіють</span> красиво.
+          </h1>
+        </Reveal>
+        <Reveal delay={0.16}>
+          <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+            <p className="max-w-md text-ink-soft">
+              Кераміка, текстиль та освітлення обмеженими тиражами. Кожен обʼєкт зроблений вручну
+              — від глини до готового вигляду на вашій полиці.
+            </p>
+            <Link
+              href="/catalog"
+              className="magnetic-btn inline-flex shrink-0 items-center justify-center rounded-full bg-ink px-6 py-3 font-mono text-sm uppercase tracking-wide text-paper hover:bg-terracotta"
+            >
+              Дивитись каталог
+            </Link>
+          </div>
+        </Reveal>
+      </section>
+
+      <div className="overflow-hidden border-y border-ink/10 bg-ink py-4 text-paper">
+        <div className="animate-marquee flex w-max gap-12 whitespace-nowrap font-mono text-sm uppercase tracking-[0.3em]">
+          {[...MARQUEE_WORDS, ...MARQUEE_WORDS].map((word, i) => (
+            <span key={i} className="flex items-center gap-12">
+              {word} <span className="text-terracotta">◆</span>
+            </span>
+          ))}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+      </div>
+
+      <section className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-20">
+        <Reveal className="flex items-end justify-between gap-4">
+          <div>
+            <h2 className="font-display text-3xl md:text-4xl">Обране цього тижня</h2>
+            <p className="mt-2 text-sm text-ink-soft">
+              Дев’ять предметів, зроблених невеликими майстернями по всій Україні.
+            </p>
+          </div>
+          <Link href="/catalog" className="kinetic-link hidden font-mono text-xs uppercase tracking-widest md:block">
+            Уся вітрина →
+          </Link>
+        </Reveal>
+        <ProductGrid products={featured} />
+        <Link href="/catalog" className="kinetic-link self-start font-mono text-xs uppercase tracking-widest md:hidden">
+          Уся вітрина →
+        </Link>
+      </section>
     </div>
   );
 }
