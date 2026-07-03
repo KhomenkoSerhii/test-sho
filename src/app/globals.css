@@ -55,6 +55,18 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Tailwind v4 no longer sets cursor:pointer on buttons — restore it. */
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]),
+label:has(input[type="radio"]),
+summary {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 body {
   background: var(--paper);
   color: var(--ink);

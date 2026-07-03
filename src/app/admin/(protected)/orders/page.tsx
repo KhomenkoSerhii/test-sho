@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { listOrders } from "@/lib/data/orders";
 import { formatPrice } from "@/lib/utils";
+import { DeleteButton } from "@/components/admin/delete-button";
+import { OrderStatusSelect } from "@/components/admin/order-status-select";
+import { deleteOrderAction, updateOrderStatusAction } from "./actions";
 
 export const metadata = { title: "Admin · Orders — Terra Studio" };
 
@@ -24,6 +27,7 @@ export default async function AdminOrdersPage() {
                 <th className="px-4 py-3">Payment</th>
                 <th className="px-4 py-3">Status</th>
                 <th className="px-4 py-3">Placed</th>
+                <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody className="divide-y divide-ink/10">
@@ -37,9 +41,20 @@ export default async function AdminOrdersPage() {
                   <td className="px-4 py-3">{order.address.fullName}</td>
                   <td className="px-4 py-3 font-mono">{formatPrice(order.total)}</td>
                   <td className="px-4 py-3 text-ink-soft">{order.paymentMethod}</td>
-                  <td className="px-4 py-3 text-ink-soft">{order.status}</td>
+                  <td className="px-4 py-3">
+                    <OrderStatusSelect
+                      current={order.status}
+                      action={updateOrderStatusAction.bind(null, order.id)}
+                    />
+                  </td>
                   <td className="px-4 py-3 font-mono text-xs text-ink-soft">
                     {new Date(order.createdAt).toLocaleString("en-US")}
+                  </td>
+                  <td className="px-4 py-3 text-right">
+                    <DeleteButton
+                      action={deleteOrderAction.bind(null, order.id)}
+                      confirmText={`Delete order ${order.id}? This can't be undone.`}
+                    />
                   </td>
                 </tr>
               ))}

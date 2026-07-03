@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { getOrderById } from "@/lib/data/orders";
 import { formatPrice } from "@/lib/utils";
-import { updateOrderStatusAction } from "../actions";
+import { updateOrderStatusAction, deleteOrderAction } from "../actions";
+import { DeleteButton } from "@/components/admin/delete-button";
 
 const STATUSES = ["pending_payment", "confirmed", "processing", "shipped", "delivered", "cancelled"];
 
@@ -14,7 +15,15 @@ export default async function AdminOrderPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="font-display text-4xl">{order.id}</h1>
+      <div className="flex items-center justify-between gap-4">
+        <h1 className="font-display text-4xl">{order.id}</h1>
+        <DeleteButton
+          action={deleteOrderAction.bind(null, order.id)}
+          confirmText={`Delete order ${order.id}? This can't be undone.`}
+          label="Delete order"
+          redirectToList
+        />
+      </div>
 
       <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
         <div>

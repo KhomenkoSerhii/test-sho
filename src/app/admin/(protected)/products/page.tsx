@@ -2,6 +2,7 @@ import Link from "next/link";
 import { listProducts } from "@/lib/data/products";
 import { formatPrice } from "@/lib/utils";
 import { deleteProductAction } from "./actions";
+import { DeleteButton } from "@/components/admin/delete-button";
 
 export const metadata = { title: "Admin · Products — Terra Studio" };
 
@@ -45,11 +46,11 @@ export default async function AdminProductsPage() {
                     <Link href={`/admin/products/${product.id}/edit`} className="kinetic-link">
                       Edit
                     </Link>
-                    <form action={deleteProductAction.bind(null, product.id)}>
-                      <button type="submit" className="kinetic-link text-terracotta">
-                        Delete
-                      </button>
-                    </form>
+                    <DeleteButton
+                      action={deleteProductAction.bind(null, product.id)}
+                      title="Delete product?"
+                      confirmText={`Delete “${product.title}”? This can't be undone.`}
+                    />
                   </div>
                 </td>
               </tr>

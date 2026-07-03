@@ -94,13 +94,42 @@ export async function listOrders(): Promise<Order[]> {
   return Array.from(memoryStore().values()).sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
 }
 
-export async function updateOrderStatus(id: string, status: OrderStatus): Promise<void> {
+/**
+ * Updates an order's status only if it differs from the current value, and
+ * returns the updated order — or null if nothing changed (already at that
+ * status, or not found). Callers use the null result to avoid sending a
+ * duplicate status email when two paths confirm the same order concurrently
+ * (e.g. Stripe webhook + order-page session check).
+ */
+export async function updateOrderStatus(
+  id: string,
+  status: OrderStatus
+): Promise<Order | null> {
   if (isSupabaseConfigured) {
     const supabase = getSupabaseServerClient()!;
-    const { error } = await supabase.from("orders").update({ status }).eq("id", id);
+    const { data, error } = await supabase
+      .from("orders")
+      .update({ status })
+      .eq("id", id)
+      .neq("status", status)
+      .select("*")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    return data ? rowToOrder(data as OrderRow) : null;
+  }
+  const order = memoryStore().get(id);
+  if (!order || order.status === status) return null;
+  const updated = { ...order, status };
+  memoryStore().set(id, updated);
+  return updated;
+}
+
+export async function deleteOrder(id: string): Promise<void> {
+  if (isSupabaseConfigured) {
+    const supabase = getSupabaseServerClient()!;
+    const { error } = await supabase.from("orders").delete().eq("id", id);
     if (error) throw new Error(error.message);
     return;
   }
-  const order = memoryStore().get(id);
-  if (order) memoryStore().set(id, { ...order, status });
+  memoryStore().delete(id);
 }

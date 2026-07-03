@@ -3,6 +3,7 @@ import { checkoutSchema, SHIPPING_FEES } from "@/lib/checkout-schema";
 import { CartLine, Order } from "@/lib/types";
 import { createOrder } from "@/lib/data/orders";
 import { findCoupon, applyCoupon } from "@/lib/data/coupons";
+import { sendOrderStatusEmail } from "@/lib/email";
 
 function generateOrderId() {
   return `TS-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
@@ -57,6 +58,12 @@ export async function POST(request: NextRequest) {
   };
 
   await createOrder(order);
+
+  // Cash-on-delivery orders are confirmed on creation — email the customer now.
+  // (Card orders email after payment is confirmed via webhook / session check.)
+  if (order.status === "confirmed") {
+    await sendOrderStatusEmail(order);
+  }
 
   return NextResponse.json({ order }, { status: 201 });
 }

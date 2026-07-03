@@ -6,6 +6,7 @@ import { OrderStatusStepper } from "@/components/order-status-stepper";
 import { ClearCartOnSuccess } from "@/components/clear-cart-on-success";
 import { SHIPPING_LABELS } from "@/lib/checkout-schema";
 import { isCheckoutSessionPaid } from "@/lib/stripe";
+import { sendOrderStatusEmail } from "@/lib/email";
 
 export default async function OrderPage({
   params,
@@ -25,7 +26,9 @@ export default async function OrderPage({
   if (sessionId && order.status === "pending_payment") {
     const paid = await isCheckoutSessionPaid(sessionId, id);
     if (paid) {
-      await updateOrderStatus(id, "confirmed");
+      const updated = await updateOrderStatus(id, "confirmed");
+      // Email only if this path won the race to confirm (webhook may also fire).
+      if (updated) await sendOrderStatusEmail(updated);
       order = { ...order, status: "confirmed" };
     }
   }

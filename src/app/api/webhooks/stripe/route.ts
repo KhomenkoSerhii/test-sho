@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStripe, isStripeConfigured } from "@/lib/stripe";
 import { updateOrderStatus } from "@/lib/data/orders";
+import { sendOrderStatusEmail } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   if (!isStripeConfigured || !process.env.STRIPE_WEBHOOK_SECRET) {
@@ -29,7 +30,10 @@ export async function POST(request: NextRequest) {
     const session = event.data.object;
     const orderId = session.metadata?.orderId;
     if (orderId) {
-      await updateOrderStatus(orderId, "confirmed");
+      const updated = await updateOrderStatus(orderId, "confirmed");
+      // Only emails if this call actually flipped the status (dedupes against
+      // the order-page session check confirming the same order concurrently).
+      if (updated) await sendOrderStatusEmail(updated);
     }
   }
 
